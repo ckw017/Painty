@@ -10,6 +10,9 @@ public class KeyboardListener extends KeyAdapter{
 
     public void keyPressed(KeyEvent e) {
         int key = e.getKeyCode();
+        if(key == KeyEvent.VK_C){
+        	canvas.clear();
+        }
     }
 
     public void keyReleased(KeyEvent e) {

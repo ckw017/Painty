@@ -13,10 +13,13 @@ import java.awt.BorderLayout;
 public class DisplayFrame extends JFrame
 {
 	private static final long serialVersionUID = 1L;
+	
+	//Window Settings
 	public static final String WINDOW_TITLE  = "Painty";
     public static final int    WINDOW_WIDTH  = 800;
     public static final int    WINDOW_HEIGHT = 600;
     
+    //GUI input components
     public static JSpinner red;
     public static JSpinner blue;
     public static JSpinner green;

@@ -1,103 +1,99 @@
+import java.awt.BasicStroke;
 import java.awt.Canvas;
 import java.awt.Color;
+import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.geom.Ellipse2D;
+import java.awt.Point;
 import java.awt.geom.Line2D;
 import java.awt.image.BufferStrategy;
 import java.awt.Rectangle;
-import java.awt.*;
+import java.awt.event.MouseListener;
 
 public class DrawingCanvas extends Canvas implements Runnable {
-    private double currX;
-    private double currY;
-    private double prevX;
-    private double prevY;
-    private boolean prevAvailable = false;
     private static final long serialVersionUID = 1L;
-    public static int WIDTH = DisplayFrame.WINDOW_WIDTH - 40;
-    public static int HEIGHT = DisplayFrame.WINDOW_HEIGHT - 40;
+    public static int CANVAS_WIDTH = DisplayFrame.WINDOW_WIDTH;
+    public static int CANVAS_HEIGHT = DisplayFrame.WINDOW_HEIGHT;
+    
+    private double previousX = -1;
+    private double previousY = -1;
+    
 
-    private boolean running = false;
-    private Thread thread;
-
-    public void init() {
+    public DrawingCanvas(){
         this.addKeyListener(new KeyboardListener(this));
-        this.addMouseListener(new MouseInput(this));
-    }
-
-    public static void main(String args[]) {
-        DrawingCanvas game = new DrawingCanvas();
-        game.init();
-        new DisplayFrame(game);
-        game.start();
-    }
-
-    private synchronized void start() {
-        if (running) {
-            return;
-        }
-        running = true;
-        thread = new Thread(this);
-        thread.start();
-    }
-
-    private synchronized void stop() {
-        if (!running)
-            return;
-        running = false;
-        try {
-            thread.join();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        System.exit(1);
+        this.addMouseListener(new MouseInputListener());
+        new Thread(this).start();
     }
 
     public void run() {
-        while (running) {
-            render();
+        while (true) {
+        	try{
+        		render();
+        	}
+        	catch(NullPointerException e){
+        		//e.printStackTrace(System.out);
+        	}
         }
-        stop();
     }
 
-    private void render() {
-        BufferStrategy bs = this.getBufferStrategy();
-        if (bs == null) {
-            createBufferStrategy(1);
-            return;
+    public void render() {
+        Point currentPos = this.getMousePosition();
+        if(this.isDrawing()){
+			double currentX = currentPos.getX();
+			double currentY = currentPos.getY();
+			if(currentPos != null){
+				if(this.previousX != -1 && this.previousY != -1){
+					this.drawStroke(previousX, previousY, currentX, currentY);
+				}
+				this.previousX = currentX;
+				this.previousY = currentY;
+			}
         }
-        if(((MouseInput)getMouseListeners()[0]).pressed == true){
-            Graphics2D g = (Graphics2D)bs.getDrawGraphics();
-            g.setColor(Color.BLUE);
-            if(getMousePosition() != null){
-                prevX = currX;
-                prevY = currY;
-                currX = getMousePosition().getX();
-                currY = getMousePosition().getY();
-            }
-            g.fill(new Ellipse2D.Double(currX - 5, currY - 5, 10, 10));
-            if(prevAvailable){
-                g.setStroke(new BasicStroke(10, BasicStroke.CAP_ROUND, BasicStroke.JOIN_BEVEL));
-                g.draw(new Line2D.Double(prevX, prevY, currX, currY));//add all of these into an array list
-            }
-            if(prevAvailable == false){
-                prevAvailable = true;
-            }
-            bs.show();
-        }
-        else if(((MouseInput)getMouseListeners()[0]).pressed == false){
-            prevAvailable = false;
+        else{
+        	this.previousX = -1;
+        	this.previousY = -1;
         }
     }
     
+    public void drawStroke(double x1, double y1, double x2, double y2){
+    	Graphics2D g2 = this.get2DGraphics();
+    	g2.setColor(DisplayFrame.getColor());
+    	g2.setStroke(new BasicStroke(DisplayFrame.getBrushSize(), BasicStroke.CAP_ROUND, BasicStroke.JOIN_BEVEL));
+        g2.draw(new Line2D.Double(x1, y1, x2, y2));
+    }
+    
     public void clear(){
-        BufferStrategy bs = this.getBufferStrategy();
-        if (bs == null) {
-            createBufferStrategy(1);
-            return;
-        }
-        Graphics2D g = (Graphics2D)bs.getDrawGraphics();
-        g.setColor(Color.WHITE);
-        g.fill(new Rectangle(1000, 1000));
+        Graphics2D g2 = this.get2DGraphics();
+        g2.setColor(Color.WHITE);
+        g2.fill(new Rectangle(CANVAS_WIDTH, CANVAS_HEIGHT));
+    }
+    
+    @Override
+    public BufferStrategy getBufferStrategy()
+    {
+    	BufferStrategy bs = super.getBufferStrategy();
+    	if(bs == null) //Check if a buffer strategy currently exists
+    	{
+    		//If not, creates a buffer strategy and returns it
+    		createBufferStrategy(1);
+    		return super.getBufferStrategy();
+    	}
+    	else
+    	{
+    		//Otherwise, returns the buffer strategy
+    		return bs;
+    	}
+    }
+    
+    public Graphics2D get2DGraphics(){
+    	BufferStrategy bs = this.getBufferStrategy();
+    	Graphics g = bs.getDrawGraphics();
+    	Graphics2D g2 = (Graphics2D)g;
+    	return g2;
+    }
+    
+    public boolean isDrawing(){
+    	MouseListener[] mouseListeners = this.getMouseListeners();
+    	MouseInputListener inputListener = (MouseInputListener)mouseListeners[0];
+    	return inputListener.isPressed();
     }
 }

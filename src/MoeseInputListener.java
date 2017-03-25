@@ -1,7 +1,7 @@
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-public class MouseInputListener extends MouseAdapter{
+public class MoeseInputListener extends MouseAdapter{
 	private boolean pressed;
 
 	public boolean isPressed(){

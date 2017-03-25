@@ -4,21 +4,24 @@ import java.awt.event.MouseListener;
 
 public class MouseInput extends MouseAdapter implements MouseListener {
 	private DrawingCanvas canvas;
-	boolean pressed = false;
 
 	public MouseInput(DrawingCanvas dc) {
 		this.canvas = dc;
 	}
 
 	public void mouseClicked(MouseEvent e) {
+		int mx = e.getX();
+		int my = e.getY();
 	}
 
 	public void mousePressed(MouseEvent e) {
-		pressed = true;
+		int mx = e.getX();
+		int my = e.getY();
 	}
 
 	public void mouseReleased(MouseEvent e) {
-		pressed = false;
+		int mx = e.getX();
+		int my = e.getY();
 	}
 
 	public void mouseEntered(MouseEvent e) {

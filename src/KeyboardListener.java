@@ -2,7 +2,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
 public class KeyboardListener extends KeyAdapter{
-    private DrawingCanvas canvas;
+    DrawingCanvas canvas;
 
     public KeyboardListener(DrawingCanvas dc) {
         this.canvas = dc;
@@ -10,15 +10,12 @@ public class KeyboardListener extends KeyAdapter{
 
     public void keyPressed(KeyEvent e) {
         int key = e.getKeyCode();
-        
-        switch(key){
-	        case KeyEvent.VK_C:
-	        	this.canvas.clear();
-	        	return;
+        if(key == KeyEvent.VK_C){
+        	canvas.clear();
         }
     }
 
     public void keyReleased(KeyEvent e) {
-    	
+        int key = e.getKeyCode();
     }
 }

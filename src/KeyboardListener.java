@@ -15,6 +15,10 @@ public class KeyboardListener extends KeyAdapter{
 	        case KeyEvent.VK_C:
 	        	this.canvas.clear();
 	        	return;
+	        case KeyEvent.VK_LEFT:
+	        	return;
+	        case KeyEvent.VK_RIGHT:
+	        	return;
         }
     }
 

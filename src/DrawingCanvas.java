@@ -8,39 +8,32 @@ import java.awt.geom.Line2D;
 import java.awt.image.BufferStrategy;
 import java.awt.Rectangle;
 import java.awt.event.MouseListener;
+import java.awt.event.MouseWheelListener;
 
-public class DrawingCanvas extends Canvas implements Runnable {
+public class DrawingCanvas extends Canvas{
+	//Canvas settings
     private static final long serialVersionUID = 1L;
     public static int CANVAS_WIDTH = DisplayFrame.WINDOW_WIDTH;
     public static int CANVAS_HEIGHT = DisplayFrame.WINDOW_HEIGHT;
     
+    //Cursor positions
     private double previousX = -1;
     private double previousY = -1;
     
-
+    //Constructor
     public DrawingCanvas(){
         this.addKeyListener(new KeyboardListener(this));
         this.addMouseListener(new MouseInputListener());
-        new Thread(this).start();
+        this.addMouseWheelListener((MouseWheelListener) this.getMouseListeners()[0]);
     }
 
-    public void run() {
-        while (true) {
-        	try{
-        		render();
-        	}
-        	catch(NullPointerException e){
-        		//e.printStackTrace(System.out);
-        	}
-        }
-    }
-
+    //Render method for drawing
     public void render() {
-        Point currentPos = this.getMousePosition();
         if(this.isDrawing()){
-			double currentX = currentPos.getX();
-			double currentY = currentPos.getY();
+            Point currentPos = this.getMousePosition();
 			if(currentPos != null){
+				double currentX = currentPos.getX();
+				double currentY = currentPos.getY();
 				if(this.previousX != -1 && this.previousY != -1){
 					this.drawStroke(previousX, previousY, currentX, currentY);
 				}

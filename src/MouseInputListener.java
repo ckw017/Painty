@@ -1,5 +1,6 @@
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseWheelEvent;
 
 public class MouseInputListener extends MouseAdapter{
 	private boolean pressed;
@@ -12,19 +13,11 @@ public class MouseInputListener extends MouseAdapter{
 		pressed = false;
 	}
 
-	public void mouseClicked(MouseEvent e) {
-		
-	}
-
 	public void mousePressed(MouseEvent e) {
 		pressed = true;
 	}
-
-	public void mouseEntered(MouseEvent e) {
-		
-	}
-
-	public void mouseExited(MouseEvent e) {
-		
+	
+	public void mouseWheelMoved(MouseWheelEvent e) {
+        DisplayFrame.brush.setValue(DisplayFrame.brush.getValue() + e.getWheelRotation() * 3); 
 	}
 }

@@ -22,6 +22,7 @@ public class DrawingCanvas extends Canvas{
     
     //Constructor
     public DrawingCanvas(){
+	this.setSize(CANVAS_WIDTH, CANVAS_HEIGHT);
         this.addKeyListener(new KeyboardListener(this));
         this.addMouseListener(new MouseInputListener());
         this.addMouseWheelListener((MouseWheelListener) this.getMouseListeners()[0]);

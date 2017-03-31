@@ -11,6 +11,7 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseWheelListener;
 
 public class DrawingCanvas extends Canvas{
+	
 	//Canvas settings
     private static final long serialVersionUID = 1L;
     public static int CANVAS_WIDTH = DisplayFrame.WINDOW_WIDTH;
@@ -20,11 +21,14 @@ public class DrawingCanvas extends Canvas{
     private double previousX = -1;
     private double previousY = -1;
     
+    private DisplayFrame frame;
+    
     //Constructor
-    public DrawingCanvas(){
-	this.setSize(CANVAS_WIDTH, CANVAS_HEIGHT);
-        this.addKeyListener(new KeyboardListener(this));
-        this.addMouseListener(new MouseInputListener());
+    public DrawingCanvas(DisplayFrame frame){
+    	this.frame = frame;
+    	this.setSize(CANVAS_WIDTH, CANVAS_HEIGHT);
+        this.addKeyListener(new KeyboardListener(frame));
+        this.addMouseListener(new MouseInputListener(frame));
         this.addMouseWheelListener((MouseWheelListener) this.getMouseListeners()[0]);
     }
 
@@ -50,8 +54,8 @@ public class DrawingCanvas extends Canvas{
     
     public void drawStroke(double x1, double y1, double x2, double y2){
     	Graphics2D g2 = this.get2DGraphics();
-    	g2.setColor(DisplayFrame.getColor());
-    	g2.setStroke(new BasicStroke(DisplayFrame.getBrushSize(), BasicStroke.CAP_ROUND, BasicStroke.JOIN_BEVEL));
+    	g2.setColor(frame.getColor());
+    	g2.setStroke(new BasicStroke(frame.getBrushSize(), BasicStroke.CAP_ROUND, BasicStroke.JOIN_BEVEL));
         g2.draw(new Line2D.Double(x1, y1, x2, y2));
     }
     
@@ -61,7 +65,6 @@ public class DrawingCanvas extends Canvas{
         g2.fill(new Rectangle(CANVAS_WIDTH, CANVAS_HEIGHT));
     }
     
-    @Override
     public BufferStrategy getBufferStrategy()
     {
     	BufferStrategy bs = super.getBufferStrategy();

@@ -3,7 +3,6 @@ import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
@@ -15,7 +14,7 @@ import javax.swing.JTextField;
 import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
 
-public class DisplayFrame extends JFrame implements Runnable, ActionListener {
+public class DisplayFrame extends JFrame {
 	private static final long serialVersionUID = 1L;
 
 	// Window Settings
@@ -24,17 +23,19 @@ public class DisplayFrame extends JFrame implements Runnable, ActionListener {
 	public static final int WINDOW_HEIGHT = 600;
 
 	// GUI input components
-	public static DisplayFrame frame;
-	public static DrawingCanvas canvas = new DrawingCanvas();
-	public static JTextField brushText;
-	public static JSpinner red;
-	public static JSpinner blue;
-	public static JSpinner green;
-	public static JSlider brush;
+	private DrawingCanvas canvas;
+	private JTextField brushText;
+
+	private JSpinner red;
+	private JSpinner blue;
+	private JSpinner green;
+	private JSlider brush;
 
 	public DisplayFrame() {
 		// Superclass constructor
 		super();
+
+		canvas = new DrawingCanvas(this);
 
 		// Window properties
 		this.setTitle(WINDOW_TITLE);
@@ -51,14 +52,13 @@ public class DisplayFrame extends JFrame implements Runnable, ActionListener {
 		// User input properties
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.requestFocus();
-	}
 
-	public static void main(String[] args) {
 		createAndShowGUI();
 	}
 
-	public static void createAndShowGUI() {
-		frame = new DisplayFrame();
+	private void createAndShowGUI() {
+		ButtonListener buttonListener = new ButtonListener(this);
+
 		Container controls = new Container();
 
 		SpinnerNumberModel redModel = new SpinnerNumberModel(0, 0, 255, 16);
@@ -79,34 +79,34 @@ public class DisplayFrame extends JFrame implements Runnable, ActionListener {
 
 		JButton clearButton = new JButton("clear");
 		clearButton.setActionCommand("clear");
-		clearButton.addActionListener(frame);
+		clearButton.addActionListener(buttonListener);
 
 		JButton backgroundColorButton = new JButton("Set Background");
 		backgroundColorButton.setActionCommand("background");
-		backgroundColorButton.addActionListener(frame);
+		backgroundColorButton.addActionListener(buttonListener);
 
 		controls.add(clearButton);
 		controls.add(backgroundColorButton);
 
-		addColorButton(controls, "red", Color.RED, frame);
-		addColorButton(controls, "orange", Color.ORANGE, frame);
-		addColorButton(controls, "yellow", Color.YELLOW, frame);
-		addColorButton(controls, "green", Color.GREEN, frame);
-		addColorButton(controls, "blue", Color.BLUE, frame);
-		addColorButton(controls, "magenta", Color.MAGENTA, frame);
-		addColorButton(controls, "black", Color.BLACK, frame);
-		addColorButton(controls, "white", Color.WHITE, frame);
+		addColorButton(controls, "red", Color.RED, buttonListener);
+		addColorButton(controls, "orange", Color.ORANGE, buttonListener);
+		addColorButton(controls, "yellow", Color.YELLOW, buttonListener);
+		addColorButton(controls, "green", Color.GREEN, buttonListener);
+		addColorButton(controls, "blue", Color.BLUE, buttonListener);
+		addColorButton(controls, "magenta", Color.MAGENTA, buttonListener);
+		addColorButton(controls, "black", Color.BLACK, buttonListener);
+		addColorButton(controls, "white", Color.WHITE, buttonListener);
 
 		controls.setVisible(true);
 
-		frame.getContentPane().add(controls, BorderLayout.NORTH);
-		frame.getContentPane().setBackground(Color.LIGHT_GRAY);
-		frame.pack();
+		this.getContentPane().add(controls, BorderLayout.NORTH);
+		this.getContentPane().setBackground(Color.LIGHT_GRAY);
+		this.pack();
 
-		new Thread(frame).start();
+		new Thread(new Loop(this)).start();
 	}
 
-	public static JButton addColorButton(Container c, String colorName, Color color, ActionListener al) {
+	private JButton addColorButton(Container c, String colorName, Color color, ActionListener al) {
 		JButton colorButton = new JButton();
 		colorButton.setPreferredSize(new Dimension(20, 20));
 		colorButton.setBackground(color);
@@ -118,28 +118,7 @@ public class DisplayFrame extends JFrame implements Runnable, ActionListener {
 		return colorButton;
 	}
 
-	public static Color getColor() {
-		int r = (int) red.getValue();
-		int g = (int) green.getValue();
-		int b = (int) blue.getValue();
-		return new Color(r, g, b);
-	}
-
-	public static void setColor(Color c) {
-		red.setValue(c.getRed());
-		blue.setValue(c.getBlue());
-		green.setValue(c.getGreen());
-	}
-
-	public static int getBrushSize() {
-		return brush.getValue();
-	}
-
-	public static void setBrushSize(int brushSize) {
-		brush.setValue(brushSize);
-	}
-
-	public static JSpinner addLabeledSpinner(Container c, String label, SpinnerModel model) {
+	private JSpinner addLabeledSpinner(Container c, String label, SpinnerModel model) {
 		JLabel l = new JLabel(label);
 		c.add(l);
 
@@ -150,49 +129,50 @@ public class DisplayFrame extends JFrame implements Runnable, ActionListener {
 		return spinner;
 	}
 
-	@Override
-	public void run() {
-		while (true) {
-			brushText.setText(Integer.toString(brush.getValue()));
-			canvas.render();
-		}
+	// Getters And Setters
+
+	public Color getColor() {
+		int r = (int) red.getValue();
+		int g = (int) green.getValue();
+		int b = (int) blue.getValue();
+		return new Color(r, g, b);
 	}
 
-	public void actionPerformed(ActionEvent e) {
-		String command = e.getActionCommand();
-		switch (command) {
-		case "clear":
-			canvas.clear();
-			return;
-		case "background":
-			canvas.setBackground(getColor());
-			canvas.render();
-			System.out.println(canvas.getBackground());
-			return;
-		case "red":
-			setColor(Color.RED);
-			return;
-		case "orange":
-			setColor(Color.ORANGE);
-			return;
-		case "yellow":
-			setColor(Color.YELLOW);
-			return;
-		case "green":
-			setColor(Color.GREEN);
-			return;
-		case "blue":
-			setColor(Color.BLUE);
-			return;
-		case "magenta":
-			setColor(Color.MAGENTA);
-			return;
-		case "black":
-			setColor(Color.BLACK);
-			return;
-		case "white":
-			setColor(Color.white);
-			return;
-		}
+	public void setColor(Color c) {
+		red.setValue(c.getRed());
+		blue.setValue(c.getBlue());
+		green.setValue(c.getGreen());
+	}
+
+	public int getBrushSize() {
+		return brush.getValue();
+	}
+
+	public void setBrushSize(int brushSize) {
+		brush.setValue(brushSize);
+	}
+
+	public DrawingCanvas getCanvas() {
+		return canvas;
+	}
+
+	public void setCanvas(DrawingCanvas canvas) {
+		this.canvas = canvas;
+	}
+
+	public JTextField getBrushText() {
+		return brushText;
+	}
+
+	public void setBrushText(JTextField brushText) {
+		this.brushText = brushText;
+	}
+
+	public JSlider getBrush() {
+		return brush;
+	}
+
+	public void setBrush(JSlider brush) {
+		this.brush = brush;
 	}
 }

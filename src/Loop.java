@@ -9,7 +9,7 @@ public class Loop implements Runnable {
 
 	public void run() {
 
-		// The loop that just renders the canvas
+		// The loop that renders the canvas
 		while (true) {
 			frame.getBrushText().setText(Integer.toString(frame.getBrush().getValue()));
 			frame.getCanvas().render();

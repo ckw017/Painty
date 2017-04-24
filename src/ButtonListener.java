@@ -12,6 +12,10 @@ public class ButtonListener implements ActionListener {
 
 	public void actionPerformed(ActionEvent e) {
 		String command = e.getActionCommand();
+		act(command);
+	}
+	
+	public void act(String command){
 		switch (command) {
 		case "clear":
 			// Clears Canvas

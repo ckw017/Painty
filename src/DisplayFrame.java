@@ -88,14 +88,14 @@ public class DisplayFrame extends JFrame {
 		controls.add(clearButton);
 		controls.add(backgroundColorButton);
 
-		addColorButton(controls, "red", Color.RED, buttonListener);
-		addColorButton(controls, "orange", Color.ORANGE, buttonListener);
-		addColorButton(controls, "yellow", Color.YELLOW, buttonListener);
-		addColorButton(controls, "green", Color.GREEN, buttonListener);
-		addColorButton(controls, "blue", Color.BLUE, buttonListener);
-		addColorButton(controls, "magenta", Color.MAGENTA, buttonListener);
-		addColorButton(controls, "black", Color.BLACK, buttonListener);
-		addColorButton(controls, "white", Color.WHITE, buttonListener);
+		addColorButton(controls, "red", buttonListener);
+		addColorButton(controls, "orange", buttonListener);
+		addColorButton(controls, "yellow", buttonListener);
+		addColorButton(controls, "green", buttonListener);
+		addColorButton(controls, "blue", buttonListener);
+		addColorButton(controls, "magenta", buttonListener);
+		addColorButton(controls, "black", buttonListener);
+		addColorButton(controls, "white", buttonListener);
 
 		controls.setVisible(true);
 
@@ -106,10 +106,10 @@ public class DisplayFrame extends JFrame {
 		new Thread(new Loop(this)).start();
 	}
 
-	private JButton addColorButton(Container c, String colorName, Color color, ActionListener al) {
+	private JButton addColorButton(Container c, String colorName, ActionListener al) {
 		JButton colorButton = new JButton();
 		colorButton.setPreferredSize(new Dimension(20, 20));
-		colorButton.setBackground(color);
+		colorButton.setBackground(stringToColor(colorName));
 		colorButton.setBorderPainted(false);
 		colorButton.setOpaque(true);
 		colorButton.setActionCommand(colorName);
@@ -117,7 +117,31 @@ public class DisplayFrame extends JFrame {
 		c.add(colorButton);
 		return colorButton;
 	}
+	
+	private Color stringToColor(String c){
+		switch(c){
+		case "red":
+			return Color.RED;
+		case "orange":
+			return Color.ORANGE;
+		case "yellow":
+			return Color.YELLOW;
+		case "green":
+			return Color.GREEN;
+		case "blue":
+			return Color.BLUE;
+		case "magenta":
+			return Color.MAGENTA;
+		case "black":
+			return Color.BLACK;
+		case "white":
+			return Color.WHITE;
+		}
+		return Color.BLACK;
+	}
 
+	//The below method was copied from the Oracle example database, found at this url:
+	//http://docs.oracle.com/javase/tutorial/uiswing/examples/components/SpinnerDemo2Project/src/components/SpinnerDemo.java
 	private JSpinner addLabeledSpinner(Container c, String label, SpinnerModel model) {
 		JLabel l = new JLabel(label);
 		c.add(l);

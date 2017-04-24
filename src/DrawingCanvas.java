@@ -4,9 +4,11 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
 import java.awt.image.BufferStrategy;
 import java.awt.Rectangle;
+import java.awt.Shape;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseWheelListener;
 
@@ -53,8 +55,10 @@ public class DrawingCanvas extends Canvas{
     }
     
     public void drawStroke(double x1, double y1, double x2, double y2){
+    	int brushSize = frame.getBrushSize();
     	Graphics2D g2 = this.get2DGraphics();
     	g2.setColor(frame.getColor());
+    	g2.fill(new Ellipse2D.Double(x1 - brushSize/2, y1 - brushSize/2, frame.getBrushSize(), brushSize));
     	g2.setStroke(new BasicStroke(frame.getBrushSize(), BasicStroke.CAP_ROUND, BasicStroke.JOIN_BEVEL));
         g2.draw(new Line2D.Double(x1, y1, x2, y2));
     }
